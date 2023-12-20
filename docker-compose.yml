@@ -4,7 +4,7 @@ version: '3.6'
 
 services:
   ollama:
-    # Uncomment below for GPU support
+    # Use nvidia gpu
     deploy:
       resources:
         reservations:
@@ -15,9 +15,6 @@ services:
                 - gpu
     volumes:
       - ollama:/root/.ollama
-    # Uncomment below to expose Ollama API outside the container stack
-    # ports:
-    #   - 11434:11434
     container_name: ollama
     pull_policy: always
     tty: true
@@ -31,7 +28,7 @@ services:
     depends_on:
       - ollama
     ports:
-      - 3007:8080
+      - 3007:8080 # host at http://localhost:3007
     environment:
       - "OLLAMA_API_BASE_URL=http://ollama:11434/api"
     extra_hosts:
