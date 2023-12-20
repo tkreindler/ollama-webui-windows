@@ -13,27 +13,35 @@ services:
               count: 1
               capabilities:
                 - gpu
+    
+    # store large models on a docker volume
     volumes:
       - ollama:/root/.ollama
+
+    # always pull the latest version from the container registry
     container_name: ollama
     pull_policy: always
-    tty: true
     restart: unless-stopped
     image: ollama/ollama:latest
 
   ollama-webui:
-    image: ghcr.io/ollama-webui/ollama-webui:main
-    container_name: ollama-webui
-    pull_policy: always
+    # communicate with the main container
     depends_on:
       - ollama
-    ports:
-      - 3007:8080 # host at http://localhost:3007
     environment:
       - "OLLAMA_API_BASE_URL=http://ollama:11434/api"
     extra_hosts:
       - host.docker.internal:host-gateway
+    
+    # host at http://localhost:3007
+    ports:
+      - 3007:8080 
+
+    # always pull the latest version from the github container registry
+    container_name: ollama-webui
+    pull_policy: always
     restart: unless-stopped
+    image: ghcr.io/ollama-webui/ollama-webui:main
 
 volumes:
   ollama: {}
